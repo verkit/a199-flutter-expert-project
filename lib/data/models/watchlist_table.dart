@@ -1,32 +1,46 @@
 import 'package:ditonton/domain/entities/movie.dart';
 import 'package:ditonton/domain/entities/movie_detail.dart';
+import 'package:ditonton/domain/entities/tv.dart';
+import 'package:ditonton/domain/entities/tv_detail.dart';
 import 'package:equatable/equatable.dart';
 
-class MovieTable extends Equatable {
+class WatchlistTable extends Equatable {
   final int id;
   final String? title;
   final String? posterPath;
   final String? overview;
+  final bool? isTv;
 
-  MovieTable({
+  WatchlistTable({
     required this.id,
     required this.title,
     required this.posterPath,
     required this.overview,
+    this.isTv = false,
   });
 
-  factory MovieTable.fromEntity(MovieDetail movie) => MovieTable(
+  factory WatchlistTable.fromMovieEntity(MovieDetail movie) => WatchlistTable(
         id: movie.id,
         title: movie.title,
         posterPath: movie.posterPath,
         overview: movie.overview,
+        isTv: false,
       );
 
-  factory MovieTable.fromMap(Map<String, dynamic> map) => MovieTable(
+  factory WatchlistTable.fromTvEntity(TvDetail tv) => WatchlistTable(
+        id: tv.id,
+        title: tv.name,
+        posterPath: tv.posterPath,
+        overview: tv.overview,
+        isTv: true,
+      );
+
+  factory WatchlistTable.fromMap(Map<String, dynamic> map) => WatchlistTable(
         id: map['id'],
         title: map['title'],
         posterPath: map['posterPath'],
         overview: map['overview'],
+        isTv: map['is_tv'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -34,16 +48,23 @@ class MovieTable extends Equatable {
         'title': title,
         'posterPath': posterPath,
         'overview': overview,
+        'is_tv': isTv,
       };
 
-  Movie toEntity() => Movie.watchlist(
+  Movie toMovieEntity() => Movie.watchlist(
         id: id,
         overview: overview,
         posterPath: posterPath,
         title: title,
       );
 
+  Tv toTvEntity() => Tv.watchlist(
+        id: id,
+        overview: overview,
+        posterPath: posterPath,
+        name: title,
+      );
+
   @override
-  // TODO: implement props
   List<Object?> get props => [id, title, posterPath, overview];
 }
