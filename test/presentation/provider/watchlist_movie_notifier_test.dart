@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:ditonton/common/failure.dart';
 import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/domain/usecases/get_watchlist_movies.dart';
+import 'package:ditonton/domain/usecases/movie/get_watchlist_movies.dart';
 import 'package:ditonton/presentation/provider/watchlist_movie_notifier.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -28,8 +28,7 @@ void main() {
 
   test('should change movies data when data is gotten successfully', () async {
     // arrange
-    when(mockGetWatchlistMovies.execute())
-        .thenAnswer((_) async => Right([testWatchlistMovie]));
+    when(mockGetWatchlistMovies.execute()).thenAnswer((_) async => Right([testWatchlistMovie]));
     // act
     await provider.fetchWatchlistMovies();
     // assert
@@ -40,8 +39,7 @@ void main() {
 
   test('should return error when data is unsuccessful', () async {
     // arrange
-    when(mockGetWatchlistMovies.execute())
-        .thenAnswer((_) async => Left(DatabaseFailure("Can't get data")));
+    when(mockGetWatchlistMovies.execute()).thenAnswer((_) async => Left(DatabaseFailure("Can't get data")));
     // act
     await provider.fetchWatchlistMovies();
     // assert
