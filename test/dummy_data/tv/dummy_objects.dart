@@ -1,5 +1,6 @@
 import 'package:ditonton/data/models/watchlist_table.dart';
 import 'package:ditonton/domain/entities/genre.dart';
+import 'package:ditonton/domain/entities/season.dart';
 import 'package:ditonton/domain/entities/tv.dart';
 import 'package:ditonton/domain/entities/tv_detail.dart';
 
@@ -41,6 +42,17 @@ final testTvDetail = TvDetail(
   overview: 'overview',
   popularity: 1.0,
   posterPath: 'posterPath',
+  seasons: [
+    Season(
+      airDate: '2021-01-01',
+      episodeCount: 1,
+      id: 1,
+      name: 'name',
+      overview: 'overview',
+      posterPath: 'posterPath',
+      seasonNumber: 1,
+    )
+  ],
   status: 'status',
   tagline: 'tagline',
   type: 'type',

@@ -1,4 +1,5 @@
 import 'package:ditonton/domain/entities/genre.dart';
+import 'package:ditonton/domain/entities/season.dart';
 import 'package:equatable/equatable.dart';
 
 class TvDetail extends Equatable {
@@ -21,6 +22,7 @@ class TvDetail extends Equatable {
     required this.overview,
     required this.popularity,
     required this.posterPath,
+    required this.seasons,
     required this.status,
     required this.tagline,
     required this.type,
@@ -46,6 +48,7 @@ class TvDetail extends Equatable {
   final String overview;
   final double popularity;
   final String? posterPath;
+  final List<Season> seasons;
   final String status;
   final String tagline;
   final String type;
@@ -72,6 +75,7 @@ class TvDetail extends Equatable {
         overview,
         popularity,
         posterPath,
+        seasons,
         status,
         tagline,
         type,

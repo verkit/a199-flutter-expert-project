@@ -1,4 +1,5 @@
 import 'package:ditonton/data/models/genre_model.dart';
+import 'package:ditonton/data/models/tv/season_model.dart';
 import 'package:ditonton/domain/entities/tv_detail.dart';
 import 'package:equatable/equatable.dart';
 
@@ -22,6 +23,7 @@ class TvDetailModel extends Equatable {
     required this.overview,
     required this.popularity,
     required this.posterPath,
+    required this.seasons,
     required this.status,
     required this.tagline,
     required this.type,
@@ -48,6 +50,7 @@ class TvDetailModel extends Equatable {
   final double popularity;
   final String? posterPath;
   final String status;
+  final List<SeasonModel> seasons;
   final String tagline;
   final String type;
   final double voteAverage;
@@ -72,6 +75,7 @@ class TvDetailModel extends Equatable {
         overview: json['overview'],
         popularity: json['popularity'],
         posterPath: json['poster_path'],
+        seasons: List.from(json['seasons']).map((e) => SeasonModel.fromJson(e)).toList(),
         status: json['status'],
         tagline: json['tagline'],
         type: json['type'],
@@ -98,6 +102,7 @@ class TvDetailModel extends Equatable {
         'overview': overview,
         'popularity': popularity,
         'poster_path': posterPath,
+        'seasons': seasons.map((e) => e.toJson()).toList(),
         'status': status,
         'tagline': tagline,
         'type': type,
@@ -124,6 +129,7 @@ class TvDetailModel extends Equatable {
         overview: overview,
         popularity: popularity,
         posterPath: posterPath,
+        seasons: seasons.map((e) => e.toEntity()).toList(),
         status: status,
         tagline: tagline,
         type: type,
@@ -151,6 +157,7 @@ class TvDetailModel extends Equatable {
         overview,
         popularity,
         posterPath,
+        seasons,
         status,
         tagline,
         type,
