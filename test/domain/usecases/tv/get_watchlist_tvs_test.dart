@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:ditonton/domain/usecases/tv/get_watchlist_tvs.dart';
+import 'package:ditonton/domain/usecases/tv/get_tvs_watchlist.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -7,12 +7,12 @@ import '../../../dummy_data/tv/dummy_objects.dart';
 import '../../../helpers/test_helper.mocks.dart';
 
 void main() {
-  late GetWatchlistTvs usecase;
+  late GetTvsWatchlist usecase;
   late MockTvRepository mockTvRepository;
 
   setUp(() {
     mockTvRepository = MockTvRepository();
-    usecase = GetWatchlistTvs(mockTvRepository);
+    usecase = GetTvsWatchlist(mockTvRepository);
   });
 
   test('should get list of tvs from the repository', () async {
