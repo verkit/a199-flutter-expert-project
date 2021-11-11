@@ -32,13 +32,21 @@ import 'package:ditonton/presentation/provider/movie/movie_search_notifier.dart'
 import 'package:ditonton/presentation/provider/movie/popular_movies_notifier.dart';
 import 'package:ditonton/presentation/provider/movie/top_rated_movies_notifier.dart';
 import 'package:ditonton/presentation/provider/movie/watchlist_movie_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/popular_tvs_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/top_rated_tvs_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/tv_list_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/tv_search_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/watchlist_tv_notifier.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+
+import 'presentation/provider/tv/tv_detail_notifier.dart';
 
 final locator = GetIt.instance;
 
 void init() {
   // provider
+  // movie provider
   locator.registerFactory(
     () => MovieListNotifier(
       getNowPlayingMovies: locator(),
@@ -73,6 +81,44 @@ void init() {
   locator.registerFactory(
     () => WatchlistMovieNotifier(
       getWatchlistMovies: locator(),
+    ),
+  );
+
+  // tvs provider
+  locator.registerFactory(
+    () => TvListNotifier(
+      getNowPlayingTvs: locator(),
+      getPopularTvs: locator(),
+      getTopRatedTvs: locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => TvDetailNotifier(
+      getTvDetail: locator(),
+      getTvRecommendations: locator(),
+      getWatchListStatus: locator(),
+      saveWatchlist: locator(),
+      removeWatchlist: locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => TvSearchNotifier(
+      searchTvs: locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => PopularTvsNotifier(
+      locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => TopRatedTvsNotifier(
+      getTopRatedTvs: locator(),
+    ),
+  );
+  locator.registerFactory(
+    () => WatchlistTvNotifier(
+      getWatchlistTvs: locator(),
     ),
   );
 

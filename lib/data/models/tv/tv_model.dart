@@ -29,7 +29,7 @@ class TvModel extends Equatable {
   final String overview;
   final double popularity;
   final String? posterPath;
-  final double voteAverage;
+  final num voteAverage;
   final int voteCount;
 
   factory TvModel.fromJson(Map<String, dynamic> json) => TvModel(

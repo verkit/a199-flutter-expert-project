@@ -28,7 +28,7 @@ class Tv extends Equatable {
   String? overview;
   double? popularity;
   String? posterPath;
-  double? voteAverage;
+  num? voteAverage;
   int? voteCount;
 
   Tv.watchlist({
