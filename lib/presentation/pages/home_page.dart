@@ -1,6 +1,7 @@
 import 'package:ditonton/presentation/pages/movie/home_movie_page.dart';
 import 'package:ditonton/presentation/pages/movie/search_page.dart';
 import 'package:ditonton/presentation/pages/tv/home_tv_page.dart';
+import 'package:ditonton/presentation/pages/tv/search_page.dart';
 import 'package:ditonton/presentation/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,11 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, MovieSearchPage.ROUTE_NAME);
+              if (_selectedIndex == 0) {
+                Navigator.pushNamed(context, MovieSearchPage.ROUTE_NAME);
+              } else {
+                Navigator.pushNamed(context, TvSearchPage.ROUTE_NAME);
+              }
             },
             icon: Icon(Icons.search),
           )

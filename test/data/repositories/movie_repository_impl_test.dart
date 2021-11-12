@@ -189,7 +189,8 @@ void main() {
 
     test('should return Movie data when the call to remote data source is successful', () async {
       // arrange
-      when(mockRemoteDataSource.getMovieDetail(tId)).thenAnswer((_) async => tMovieResponse);
+      when(mockRemoteDataSource.getMovieDetail(tId))
+          .thenAnswer((_) async => MovieDetailResponse.fromJson(tMovieResponse.toJson()));
       // act
       final result = await repository.getMovieDetail(tId);
       // assert

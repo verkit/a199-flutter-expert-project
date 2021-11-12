@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/exception.dart';
 import 'package:ditonton/data/datasources/tv_remote_data_source.dart';
+import 'package:ditonton/data/models/tv/episode_model.dart';
+import 'package:ditonton/data/models/tv/season_detail_model.dart';
 import 'package:ditonton/data/models/tv/tv_detail_model.dart';
 import 'package:ditonton/data/models/tv/tv_response.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,14 +29,8 @@ void main() {
 
     test('should return list of Tv Model when the response code is 200', () async {
       // arrange
-      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/airing_today?$API_KEY'))).thenAnswer(
-        (_) async => http.Response(
-          readJson('dummy_data/tv/now_playing.json'),
-          200,
-          headers: {
-            HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
-          },
-        ),
+      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/on_the_air?$API_KEY'))).thenAnswer(
+        (_) async => http.Response(readJson('dummy_data/tv/now_playing.json'), 200),
       );
       // act
       final result = await dataSource.getNowPlayingTvs();
@@ -44,7 +40,7 @@ void main() {
 
     test('should throw a ServerException when the response code is 404 or other', () async {
       // arrange
-      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/airing_today?$API_KEY')))
+      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/on_the_air?$API_KEY')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
       // act
       final call = dataSource.getNowPlayingTvs();
@@ -194,6 +190,54 @@ void main() {
           .thenAnswer((_) async => http.Response('Not Found', 404));
       // act
       final call = dataSource.searchTvs(tQuery);
+      // assert
+      expect(() => call, throwsA(isA<ServerException>()));
+    });
+  });
+
+  group('get tv season detail', () {
+    final tvId = 1;
+    final seasonNumber = 1;
+
+    final tEpisodeModel = EpisodeModel(
+      airDate: '2021-12-14',
+      episodeNumber: 1,
+      id: 1,
+      name: 'Episode 1',
+      overview: 'overview',
+      productionCode: '',
+      seasonNumber: seasonNumber,
+      stillPath: '/stillPath.jpg',
+      voteAverage: 0.0,
+      voteCount: 0,
+    );
+
+    final tSeasonDetail = SeasonDetailModel(
+      airDate: '2021-10-12',
+      episodes: [tEpisodeModel],
+      id: 1,
+      name: 'Season 1',
+      overview: 'overview',
+      posterPath: '/iF8ai2QLNiHV4anwY1TuSGZXqfN.jpg',
+      seasonNumber: seasonNumber,
+    );
+
+    test('should get tv season detail', () async {
+      // arrange
+      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/$tvId/season/$seasonNumber?$API_KEY')))
+          .thenAnswer((_) async => http.Response(readJson('dummy_data/tv/season_detail.json'), 200));
+      // act
+      final result = await dataSource.getTvSeasonDetail(tvId, seasonNumber);
+      // assert
+      expect(result, equals(tSeasonDetail));
+    });
+
+    test('should throw Server Exception when the response code is 404 or other', () async {
+      // arrange
+      when(mockHttpClient.get(Uri.parse('$BASE_URL/tv/$tvId/season/$seasonNumber?$API_KEY')))
+          .thenAnswer((_) async => http.Response('Not Found', 404));
+      // act
+      final call = dataSource.getTvSeasonDetail(tvId, seasonNumber);
       // assert
       expect(() => call, throwsA(isA<ServerException>()));
     });

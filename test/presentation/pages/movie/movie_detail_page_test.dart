@@ -28,12 +28,33 @@ void main() {
     );
   }
 
+  testWidgets('Circullar progress should display when still loading', (WidgetTester tester) async {
+    when(mockNotifier.movieState).thenReturn(RequestState.Loading);
+
+    final circularProgress = find.byType(CircularProgressIndicator);
+
+    await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
+
+    expect(circularProgress, findsOneWidget);
+  });
+
+  testWidgets('Message should display when error', (WidgetTester tester) async {
+    when(mockNotifier.movieState).thenReturn(RequestState.Empty);
+    when(mockNotifier.message).thenReturn("Error");
+
+    final message = find.text("Error");
+
+    await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
+
+    expect(message, findsOneWidget);
+  });
+
   testWidgets('Watchlist button should display add icon when movie not added to watchlist',
       (WidgetTester tester) async {
     when(mockNotifier.movieState).thenReturn(RequestState.Loaded);
     when(mockNotifier.movie).thenReturn(testMovieDetail);
     when(mockNotifier.recommendationState).thenReturn(RequestState.Loaded);
-    when(mockNotifier.movieRecommendations).thenReturn(<Movie>[]);
+    when(mockNotifier.movieRecommendations).thenReturn(<Movie>[testMovie]);
     when(mockNotifier.isAddedToWatchlist).thenReturn(false);
 
     final watchlistButtonIcon = find.byIcon(Icons.add);

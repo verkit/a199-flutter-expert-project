@@ -21,6 +21,7 @@ import 'package:ditonton/domain/usecases/tv/get_popular_tvs.dart';
 import 'package:ditonton/domain/usecases/tv/get_top_rated_tvs.dart';
 import 'package:ditonton/domain/usecases/tv/get_tv_detail.dart';
 import 'package:ditonton/domain/usecases/tv/get_tv_recommendations.dart';
+import 'package:ditonton/domain/usecases/tv/get_tv_season_detail.dart';
 import 'package:ditonton/domain/usecases/tv/get_tv_watchlist_status.dart';
 import 'package:ditonton/domain/usecases/tv/get_tvs_watchlist.dart';
 import 'package:ditonton/domain/usecases/tv/remove_tv_watchlist.dart';
@@ -36,6 +37,7 @@ import 'package:ditonton/presentation/provider/tv/popular_tvs_notifier.dart';
 import 'package:ditonton/presentation/provider/tv/top_rated_tvs_notifier.dart';
 import 'package:ditonton/presentation/provider/tv/tv_list_notifier.dart';
 import 'package:ditonton/presentation/provider/tv/tv_search_notifier.dart';
+import 'package:ditonton/presentation/provider/tv/tv_season_detail_notifier.dart';
 import 'package:ditonton/presentation/provider/tv/watchlist_tv_notifier.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -117,6 +119,11 @@ void init() {
     ),
   );
   locator.registerFactory(
+    () => TvSeasonDetailNotifier(
+      getTvSeasonDetail: locator(),
+    ),
+  );
+  locator.registerFactory(
     () => WatchlistTvNotifier(
       getWatchlistTvs: locator(),
     ),
@@ -146,6 +153,7 @@ void init() {
   locator.registerLazySingleton(() => SaveTvWatchlist(locator()));
   locator.registerLazySingleton(() => RemoveTvWatchlist(locator()));
   locator.registerLazySingleton(() => GetTvsWatchlist(locator()));
+  locator.registerLazySingleton(() => GetTvSeasonDetail(locator()));
 
   // repository
   locator.registerLazySingleton<MovieRepository>(

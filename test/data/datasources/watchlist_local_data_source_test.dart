@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../dummy_data/dummy_objects.dart';
+import '../../dummy_data/tv/dummy_objects.dart';
 import '../../helpers/test_helper.mocks.dart';
 
 void main() {
@@ -85,6 +86,18 @@ void main() {
       final result = await dataSource.getWatchlistMovies();
       // assert
       expect(result, [testWatchlistTable]);
+    });
+  });
+
+  group('get watchlist tvs', () {
+    test('should return list of TvTable from database', () async {
+      // arrange
+      when(mockDatabaseHelper.getWatchlistTvs()).thenAnswer((_) async => [testTvMap]);
+      // act
+      final result = await dataSource.getWatchlistTvs();
+      // assert
+      expect(result, [testTvTable]);
+      expect(result.first.toJson(), isA<Map<String, dynamic>>());
     });
   });
 }

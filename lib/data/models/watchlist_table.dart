@@ -9,14 +9,14 @@ class WatchlistTable extends Equatable {
   final String? title;
   final String? posterPath;
   final String? overview;
-  final bool? isTv;
+  final String? type;
 
   WatchlistTable({
     required this.id,
     required this.title,
     required this.posterPath,
     required this.overview,
-    this.isTv = false,
+    this.type = 'movie',
   });
 
   factory WatchlistTable.fromMovieEntity(MovieDetail movie) => WatchlistTable(
@@ -24,7 +24,7 @@ class WatchlistTable extends Equatable {
         title: movie.title,
         posterPath: movie.posterPath,
         overview: movie.overview,
-        isTv: false,
+        type: 'movie',
       );
 
   factory WatchlistTable.fromTvEntity(TvDetail tv) => WatchlistTable(
@@ -32,7 +32,7 @@ class WatchlistTable extends Equatable {
         title: tv.name,
         posterPath: tv.posterPath,
         overview: tv.overview,
-        isTv: true,
+        type: 'tv',
       );
 
   factory WatchlistTable.fromMap(Map<String, dynamic> map) => WatchlistTable(
@@ -40,7 +40,7 @@ class WatchlistTable extends Equatable {
         title: map['title'],
         posterPath: map['posterPath'],
         overview: map['overview'],
-        isTv: map['is_tv'],
+        type: map['type'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,7 +48,7 @@ class WatchlistTable extends Equatable {
         'title': title,
         'posterPath': posterPath,
         'overview': overview,
-        'is_tv': isTv,
+        'type': type,
       };
 
   Movie toMovieEntity() => Movie.watchlist(

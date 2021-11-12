@@ -32,7 +32,7 @@ void main() {
     when(mockNotifier.tvState).thenReturn(RequestState.Loaded);
     when(mockNotifier.tv).thenReturn(testTvDetail);
     when(mockNotifier.recommendationState).thenReturn(RequestState.Loaded);
-    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[]);
+    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[testTv]);
     when(mockNotifier.isAddedToWatchlist).thenReturn(false);
 
     final watchlistButtonIcon = find.byIcon(Icons.add);
@@ -46,7 +46,7 @@ void main() {
     when(mockNotifier.tvState).thenReturn(RequestState.Loaded);
     when(mockNotifier.tv).thenReturn(testTvDetail);
     when(mockNotifier.recommendationState).thenReturn(RequestState.Loaded);
-    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[]);
+    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[testTv]);
     when(mockNotifier.isAddedToWatchlist).thenReturn(true);
 
     final watchlistButtonIcon = find.byIcon(Icons.check);
@@ -60,7 +60,7 @@ void main() {
     when(mockNotifier.tvState).thenReturn(RequestState.Loaded);
     when(mockNotifier.tv).thenReturn(testTvDetail);
     when(mockNotifier.recommendationState).thenReturn(RequestState.Loaded);
-    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[]);
+    when(mockNotifier.tvRecommendations).thenReturn(<Tv>[testTv]);
     when(mockNotifier.isAddedToWatchlist).thenReturn(false);
     when(mockNotifier.watchlistMessage).thenReturn('Added to Watchlist');
 

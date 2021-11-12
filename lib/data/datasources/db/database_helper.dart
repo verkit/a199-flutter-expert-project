@@ -26,7 +26,7 @@ class DatabaseHelper {
     final path = await getDatabasesPath();
     final databasePath = '$path/ditonton.db';
 
-    var db = await openDatabase(databasePath, version: 2, onCreate: _onCreate);
+    var db = await openDatabase(databasePath, version: 3, onCreate: _onCreate);
     return db;
   }
 
@@ -75,7 +75,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> results = await db!.query(
       _tblWatchlist,
-      where: 'is_tv = "false"',
+      where: 'type = "movie"',
     );
 
     return results;
@@ -86,7 +86,7 @@ class DatabaseHelper {
 
     final List<Map<String, dynamic>> results = await db!.query(
       _tblWatchlist,
-      where: 'is_tv = "true"',
+      where: 'type = "tv"',
     );
 
     return results;

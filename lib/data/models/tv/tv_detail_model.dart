@@ -39,7 +39,7 @@ class TvDetailModel extends Equatable {
   final int id;
   final bool inProduction;
   final List<String> languages;
-  final String lastAirDate;
+  final String? lastAirDate;
   final String name;
   final int numberOfEpisodes;
   final int numberOfSeasons;
