@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/exception.dart';
+import 'package:ditonton/common/ssl_pinning.dart' as http;
 import 'package:ditonton/data/models/movie_detail_model.dart';
 import 'package:ditonton/data/models/movie_model.dart';
 import 'package:ditonton/data/models/movie_response.dart';
-import 'package:http/http.dart' as http;
 
 abstract class MovieRemoteDataSource {
   Future<List<MovieModel>> getNowPlayingMovies();
@@ -17,7 +17,7 @@ abstract class MovieRemoteDataSource {
 }
 
 class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
-  final http.Client client;
+  final http.SSLClient client;
 
   MovieRemoteDataSourceImpl({required this.client});
 

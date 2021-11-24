@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/exception.dart';
+import 'package:ditonton/common/ssl_pinning.dart';
 import 'package:ditonton/data/datasources/tv_remote_data_source.dart';
 import 'package:ditonton/data/models/tv/episode_model.dart';
 import 'package:ditonton/data/models/tv/season_detail_model.dart';
@@ -18,10 +19,12 @@ import '../../json_reader.dart';
 void main() {
   late TvRemoteDataSource dataSource;
   late MockHttpClient mockHttpClient;
+  late SSLClient mockSSLClient;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    dataSource = TvRemoteDataSourceImpl(client: mockHttpClient);
+    mockSSLClient = SSLClient(client: mockHttpClient);
+    dataSource = TvRemoteDataSourceImpl(client: mockSSLClient);
   });
 
   group('get Now Playing Tvs', () {

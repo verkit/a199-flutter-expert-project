@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/exception.dart';
+import 'package:ditonton/common/ssl_pinning.dart' as http;
 import 'package:ditonton/data/models/tv/season_detail_model.dart';
 import 'package:ditonton/data/models/tv/tv_detail_model.dart';
 import 'package:ditonton/data/models/tv/tv_model.dart';
 import 'package:ditonton/data/models/tv/tv_response.dart';
-import 'package:http/http.dart' as http;
 
 abstract class TvRemoteDataSource {
   Future<List<TvModel>> getNowPlayingTvs();
@@ -19,7 +19,7 @@ abstract class TvRemoteDataSource {
 }
 
 class TvRemoteDataSourceImpl implements TvRemoteDataSource {
-  final http.Client client;
+  final http.SSLClient client;
 
   TvRemoteDataSourceImpl({required this.client});
 
