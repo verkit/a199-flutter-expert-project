@@ -1,7 +1,7 @@
-import 'package:core/presentation/provider/tv/watchlist_tv_notifier.dart';
+import 'package:core/presentation/bloc/tv/watchlist_tv/watchlist_tv_cubit.dart';
 import 'package:core/presentation/widgets/tv_card_list.dart';
-import 'package:core/utils/state_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistTvsPage extends StatefulWidget {
@@ -13,7 +13,7 @@ class _WatchlistTvsPageState extends State<WatchlistTvsPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => Provider.of<WatchlistTvNotifier>(context, listen: false).fetchWatchlistTvs());
+    context.read<WatchlistTvCubit>().fetchWatchlistTvs();
   }
 
   @override
@@ -24,25 +24,28 @@ class _WatchlistTvsPageState extends State<WatchlistTvsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Consumer<WatchlistTvNotifier>(
-          builder: (context, data, child) {
-            if (data.watchlistState == RequestState.Loading) {
+        child: BlocBuilder<WatchlistTvCubit, WatchlistTvsState>(
+          builder: (_, state) {
+            if (state is WatchlistTvsLoading) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (data.watchlistState == RequestState.Loaded) {
+            } else if (state is WatchlistTvsHasData) {
+              final data = state.result;
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  final tv = data.watchlistTvs[index];
+                  final tv = data[index];
                   return TvCard(tv);
                 },
-                itemCount: data.watchlistTvs.length,
+                itemCount: data.length,
               );
-            } else {
+            } else if (state is WatchlistTvsError) {
               return Center(
                 key: Key('error_message'),
-                child: Text(data.message),
+                child: Text(state.message),
               );
+            } else {
+              return SizedBox();
             }
           },
         ),

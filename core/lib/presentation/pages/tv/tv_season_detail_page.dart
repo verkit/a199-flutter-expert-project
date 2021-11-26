@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:core/core.dart';
 import 'package:core/domain/entities/season_detail.dart';
-import 'package:core/presentation/provider/tv/tv_season_detail_notifier.dart';
+import 'package:core/presentation/bloc/tv/tv_season_detail/tv_season_detail_cubit.dart';
 import 'package:core/presentation/widgets/episode_card_list.dart';
-import 'package:core/utils/state_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class TvSeasonDetailPage extends StatefulWidget {
@@ -26,28 +26,29 @@ class _TvSeasonDetailPageState extends State<TvSeasonDetailPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<TvSeasonDetailNotifier>(context, listen: false).fetchTvSeasonDetail(widget.id, widget.seasonNumber);
-    });
+    context.read<TvSeasonDetailCubit>().fetchTvSeasonDetail(widget.id, widget.seasonNumber);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Consumer<TvSeasonDetailNotifier>(
-          builder: (context, data, child) {
-            switch (data.state) {
-              case RequestState.Empty:
-                return Text(data.message);
-              case RequestState.Loading:
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              case RequestState.Loaded:
-                return SeasonEpisodes(seasonDetail: data.seasonDetail);
-              case RequestState.Error:
-                return Text(data.message);
+        child: BlocBuilder<TvSeasonDetailCubit, TvSeasonDetailState>(
+          builder: (_, state) {
+            if (state is TvSeasonDetailLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is TvSeasonDetailHasData) {
+              final data = state.result;
+              return SeasonEpisodes(seasonDetail: data);
+            } else if (state is TvSeasonDetailError) {
+              return Center(
+                key: Key('error_message'),
+                child: Text(state.message),
+              );
+            } else {
+              return SizedBox();
             }
           },
         ),

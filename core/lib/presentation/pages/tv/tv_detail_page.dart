@@ -3,11 +3,11 @@ import 'package:core/core.dart';
 import 'package:core/domain/entities/genre.dart';
 import 'package:core/domain/entities/tv.dart';
 import 'package:core/domain/entities/tv_detail.dart';
+import 'package:core/presentation/bloc/tv/tv_detail/tv_detail_bloc.dart';
 import 'package:core/presentation/pages/tv/tv_season_detail_page.dart';
-import 'package:core/presentation/provider/tv/tv_detail_notifier.dart';
-import 'package:core/utils/state_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -25,32 +25,59 @@ class _TvDetailPageState extends State<TvDetailPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<TvDetailNotifier>(context, listen: false).fetchTvDetail(widget.id);
-      Provider.of<TvDetailNotifier>(context, listen: false).loadWatchlistStatus(widget.id);
-    });
+    context.read<TvDetailBloc>().add(LoadDetailTv(widget.id));
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<TvDetailNotifier>(
-        builder: (context, provider, child) {
-          if (provider.tvState == RequestState.Loading) {
+      body: BlocConsumer<TvDetailBloc, TvDetailState>(
+        listenWhen: (previous, current) => previous != current,
+        listener: (context, state) {
+          if (state.status == TvDetailStatus.addToWatchlist) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(TvDetailBloc.watchlistAddSuccessMessage)));
+          }
+
+          if (state.status == TvDetailStatus.removeFromWatchlist) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(TvDetailBloc.watchlistRemoveSuccessMessage)));
+          }
+
+          if (state.status == TvDetailStatus.failure) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text(state.message ?? 'Error'),
+                  );
+                });
+          }
+        },
+        builder: (_, state) {
+          if (state.status == TvDetailStatus.loading || state.status == TvDetailStatus.initial) {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if (provider.tvState == RequestState.Loaded) {
-            final tv = provider.tv;
+          } else if (state.status == TvDetailStatus.success ||
+              state.status == TvDetailStatus.addToWatchlist ||
+              state.status == TvDetailStatus.removeFromWatchlist) {
+            final tv = state.tv;
             return SafeArea(
               child: DetailContent(
-                tv,
-                provider.tvRecommendations,
-                provider.isAddedToWatchlist,
+                tv!,
+                state.recommendations!,
+                state.addedInWatchlist,
               ),
             );
           } else {
-            return Text(provider.message);
+            return Center(child: Text(state.message ?? 'Error', style: TextStyle(color: Colors.white)));
           }
         },
       ),
@@ -108,24 +135,9 @@ class DetailContent extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () async {
                                 if (!isAddedWatchlist) {
-                                  await Provider.of<TvDetailNotifier>(context, listen: false).addWatchlist(tv);
+                                  context.read<TvDetailBloc>().add(AddToWatchlist(tv));
                                 } else {
-                                  await Provider.of<TvDetailNotifier>(context, listen: false).removeFromWatchlist(tv);
-                                }
-
-                                final message = Provider.of<TvDetailNotifier>(context, listen: false).watchlistMessage;
-
-                                if (message == TvDetailNotifier.watchlistAddSuccessMessage ||
-                                    message == TvDetailNotifier.watchlistRemoveSuccessMessage) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-                                } else {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          content: Text(message),
-                                        );
-                                      });
+                                  context.read<TvDetailBloc>().add(RemoveFromWatchlist(tv));
                                 }
                               },
                               child: Row(
@@ -296,54 +308,40 @@ class DetailContent extends StatelessWidget {
     );
   }
 
-  Consumer<TvDetailNotifier> _buildTvRecommendations() {
-    return Consumer<TvDetailNotifier>(
-      builder: (context, data, child) {
-        if (data.recommendationState == RequestState.Loading) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (data.recommendationState == RequestState.Error) {
-          return Text(data.message);
-        } else if (data.recommendationState == RequestState.Loaded) {
-          return Container(
-            height: 150,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final tv = recommendations[index];
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(
-                        context,
-                        TvDetailPage.ROUTE_NAME,
-                        arguments: tv.id,
-                      );
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: 'https://image.tmdb.org/t/p/w500${tv.posterPath}',
-                        placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
-                    ),
-                  ),
+  Widget _buildTvRecommendations() {
+    return Container(
+      height: 150,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          final tv = recommendations[index];
+          return Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  TvDetailPage.ROUTE_NAME,
+                  arguments: tv.id,
                 );
               },
-              itemCount: recommendations.length,
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: 'https://image.tmdb.org/t/p/w500${tv.posterPath}',
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
             ),
           );
-        } else {
-          return Container();
-        }
-      },
+        },
+        itemCount: recommendations.length,
+      ),
     );
   }
 

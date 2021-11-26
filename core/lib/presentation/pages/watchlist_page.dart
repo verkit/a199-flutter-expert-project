@@ -1,6 +1,10 @@
+import 'package:core/presentation/bloc/movie/wathclist_movie/watchlist_movies_cubit.dart';
+import 'package:core/presentation/bloc/tv/watchlist_tv/watchlist_tv_cubit.dart';
 import 'package:core/presentation/pages/movie/watchlist_movies_page.dart';
 import 'package:core/presentation/pages/tv/watchlist_page.dart';
+import 'package:core/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class WatchlistPage extends StatefulWidget {
   static const ROUTE_NAME = '/watchlist';
@@ -8,7 +12,7 @@ class WatchlistPage extends StatefulWidget {
   _WatchlistPageState createState() => _WatchlistPageState();
 }
 
-class _WatchlistPageState extends State<WatchlistPage> {
+class _WatchlistPageState extends State<WatchlistPage> with RouteAware {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
@@ -25,6 +29,23 @@ class _WatchlistPageState extends State<WatchlistPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  void didPopNext() {
+    context.read<WatchlistMoviesCubit>().fetchWatchlistMovies();
+    context.read<WatchlistTvCubit>().fetchWatchlistTvs();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
