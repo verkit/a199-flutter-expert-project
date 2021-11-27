@@ -22,9 +22,13 @@ environment:
 
 dependencies:
   about:
-    path: about
+    path: ./modules/about
   core:
-    path: core    
+    path: ./modules/core    
+  movie:
+    path: ./modules/movie
+  tv_series:
+    path: ./modules/tv_series 
   flutter:
     sdk: flutter  
   flutter_bloc: ^8.0.0

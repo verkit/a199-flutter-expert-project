@@ -1,0 +1,22 @@
+{
+    "air_date": "2021-10-12",
+    "episodes": [
+        {
+            "air_date": "2021-12-14",
+            "episode_number": 1,
+            "id": 1,            
+            "name": "Episode 1",            
+            "overview": "overview",
+            "production_code": "",
+            "season_number": 1,
+            "still_path": "/stillPath.jpg",
+            "vote_average": 0.0,
+            "vote_count": 0
+          }
+    ],
+    "id": 1,
+    "name": "Season 1",
+    "overview": "overview",
+    "poster_path": "/iF8ai2QLNiHV4anwY1TuSGZXqfN.jpg",
+    "season_number": 1
+  }
