@@ -40,7 +40,7 @@ void main() {
   final tQuery = 'chucky';
 
   test('initial state should be empty', () {
-    expect(searchBloc.state, TvSearchEmpty());
+    expect(searchBloc.state, TvSearchInitial());
   });
 
   group('Search Tvs', () {

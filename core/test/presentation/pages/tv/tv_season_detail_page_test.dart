@@ -1,21 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:core/data/models/tv/episode_model.dart';
 import 'package:core/data/models/tv/season_detail_model.dart';
+import 'package:core/presentation/bloc/tv/tv_season_detail/tv_season_detail_cubit.dart';
 import 'package:core/presentation/pages/tv/tv_season_detail_page.dart';
-import 'package:core/presentation/provider/tv/tv_season_detail_notifier.dart';
 import 'package:core/presentation/widgets/episode_card_list.dart';
-import 'package:core/utils/state_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 
 import 'tv_season_detail_page_test.mocks.dart';
 
-@GenerateMocks([TvSeasonDetailNotifier])
+@GenerateMocks([TvSeasonDetailCubit])
 void main() {
-  late MockTvSeasonDetailNotifier mockNotifier;
+  late MockTvSeasonDetailCubit mockCubit;
 
   final tvId = 1;
   final seasonNumber = 1;
@@ -44,21 +43,33 @@ void main() {
   );
 
   setUp(() {
-    mockNotifier = MockTvSeasonDetailNotifier();
+    mockCubit = MockTvSeasonDetailCubit();
   });
 
   Widget _makeTestableWidget(Widget body) {
-    return ChangeNotifierProvider<TvSeasonDetailNotifier>.value(
-      value: mockNotifier,
+    return BlocProvider<TvSeasonDetailCubit>.value(
+      value: mockCubit,
       child: MaterialApp(
         home: body,
       ),
     );
   }
 
+  testWidgets('Page should display loading when loading', (tester) async {
+    when(mockCubit.state).thenReturn(TvSeasonDetailLoading());
+    when(mockCubit.stream).thenAnswer((_) => const Stream.empty());
+
+    await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
+      id: tvId,
+      seasonNumber: seasonNumber,
+    )));
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
   testWidgets('Page should display detail', (tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loaded);
-    when(mockNotifier.seasonDetail).thenReturn(tSeasonDetail.toEntity());
+    when(mockCubit.state).thenReturn(TvSeasonDetailHasData(tSeasonDetail.toEntity()));
+    when(mockCubit.stream).thenAnswer((_) => Stream.value(TvSeasonDetailHasData(tSeasonDetail.toEntity())));
 
     await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
       id: tvId,
@@ -70,26 +81,15 @@ void main() {
     expect(find.byType(EpisodeCard), findsNWidgets(tSeasonDetail.episodes.length));
   });
 
-  testWidgets('Page should display loading when loading', (tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loading);
-
-    await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
-      id: tvId,
-      seasonNumber: seasonNumber,
-    )));
-
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
-
   testWidgets('Page should display error when error', (tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Error);
-    when(mockNotifier.message).thenReturn("Error");
+    when(mockCubit.state).thenReturn(TvSeasonDetailError('Error Message'));
+    when(mockCubit.stream).thenAnswer((_) => Stream.value(TvSeasonDetailError('Error Message')));
 
     await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
       id: tvId,
       seasonNumber: seasonNumber,
     )));
 
-    expect(find.text("Error"), findsOneWidget);
+    expect(find.text("Error Message"), findsOneWidget);
   });
 }

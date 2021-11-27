@@ -2,14 +2,12 @@
 // in core/test/presentation/pages/tv/tv_season_detail_page_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i6;
-import 'dart:ui' as _i7;
+import 'dart:async' as _i4;
 
-import 'package:core/domain/entities/season_detail.dart' as _i3;
+import 'package:bloc/bloc.dart' as _i5;
 import 'package:core/domain/usecases/tv/get_tv_season_detail.dart' as _i2;
-import 'package:core/presentation/provider/tv/tv_season_detail_notifier.dart'
-    as _i4;
-import 'package:core/utils/state_enum.dart' as _i5;
+import 'package:core/presentation/bloc/tv/tv_season_detail/tv_season_detail_cubit.dart'
+    as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,14 +22,15 @@ import 'package:mockito/mockito.dart' as _i1;
 class _FakeGetTvSeasonDetail_0 extends _i1.Fake
     implements _i2.GetTvSeasonDetail {}
 
-class _FakeSeasonDetail_1 extends _i1.Fake implements _i3.SeasonDetail {}
+class _FakeTvSeasonDetailState_1 extends _i1.Fake
+    implements _i3.TvSeasonDetailState {}
 
-/// A class which mocks [TvSeasonDetailNotifier].
+/// A class which mocks [TvSeasonDetailCubit].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTvSeasonDetailNotifier extends _i1.Mock
-    implements _i4.TvSeasonDetailNotifier {
-  MockTvSeasonDetailNotifier() {
+class MockTvSeasonDetailCubit extends _i1.Mock
+    implements _i3.TvSeasonDetailCubit {
+  MockTvSeasonDetailCubit() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -40,40 +39,43 @@ class MockTvSeasonDetailNotifier extends _i1.Mock
       (super.noSuchMethod(Invocation.getter(#getTvSeasonDetail),
           returnValue: _FakeGetTvSeasonDetail_0()) as _i2.GetTvSeasonDetail);
   @override
-  _i3.SeasonDetail get seasonDetail =>
-      (super.noSuchMethod(Invocation.getter(#seasonDetail),
-          returnValue: _FakeSeasonDetail_1()) as _i3.SeasonDetail);
+  _i3.TvSeasonDetailState get state => (super.noSuchMethod(
+      Invocation.getter(#state),
+      returnValue: _FakeTvSeasonDetailState_1()) as _i3.TvSeasonDetailState);
   @override
-  _i5.RequestState get state => (super.noSuchMethod(Invocation.getter(#state),
-      returnValue: _i5.RequestState.Empty) as _i5.RequestState);
+  _i4.Stream<_i3.TvSeasonDetailState> get stream =>
+      (super.noSuchMethod(Invocation.getter(#stream),
+              returnValue: Stream<_i3.TvSeasonDetailState>.empty())
+          as _i4.Stream<_i3.TvSeasonDetailState>);
   @override
-  String get message =>
-      (super.noSuchMethod(Invocation.getter(#message), returnValue: '')
-          as String);
-  @override
-  bool get hasListeners =>
-      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+  bool get isClosed =>
+      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
           as bool);
   @override
-  _i6.Future<void> fetchTvSeasonDetail(int? id, int? seasonNumber) => (super
+  _i4.Future<void> fetchTvSeasonDetail(int? id, int? seasonNumber) => (super
       .noSuchMethod(Invocation.method(#fetchTvSeasonDetail, [id, seasonNumber]),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  void addListener(_i7.VoidCallback? listener) =>
-      super.noSuchMethod(Invocation.method(#addListener, [listener]),
+  void emit(_i3.TvSeasonDetailState? state) =>
+      super.noSuchMethod(Invocation.method(#emit, [state]),
           returnValueForMissingStub: null);
   @override
-  void removeListener(_i7.VoidCallback? listener) =>
-      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
+  void onChange(_i5.Change<_i3.TvSeasonDetailState>? change) =>
+      super.noSuchMethod(Invocation.method(#onChange, [change]),
           returnValueForMissingStub: null);
   @override
-  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
-      returnValueForMissingStub: null);
-  @override
-  void notifyListeners() =>
-      super.noSuchMethod(Invocation.method(#notifyListeners, []),
+  void addError(Object? error, [StackTrace? stackTrace]) =>
+      super.noSuchMethod(Invocation.method(#addError, [error, stackTrace]),
           returnValueForMissingStub: null);
+  @override
+  void onError(Object? error, StackTrace? stackTrace) =>
+      super.noSuchMethod(Invocation.method(#onError, [error, stackTrace]),
+          returnValueForMissingStub: null);
+  @override
+  _i4.Future<void> close() => (super.noSuchMethod(Invocation.method(#close, []),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
   String toString() => super.toString();
 }

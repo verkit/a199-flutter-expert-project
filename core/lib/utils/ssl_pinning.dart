@@ -2,13 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 class SSLClient {
-  final http.Client client;
-  SSLClient({required this.client});
-
   Future<SecurityContext> get globalContext async {
     final sslCert = await rootBundle.load('certificates/themoviedb.org.pem');
     SecurityContext securityContext = SecurityContext(withTrustedRoots: false);

@@ -5,7 +5,6 @@ import 'package:core/data/models/movie_detail_model.dart';
 import 'package:core/data/models/movie_response.dart';
 import 'package:core/utils/constants.dart';
 import 'package:core/utils/exception.dart';
-import 'package:core/utils/ssl_pinning.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -15,12 +14,10 @@ import '../../json_reader.dart';
 
 void main() {
   late MovieRemoteDataSourceImpl dataSource;
-  late MockHttpClient mockHttpClient;
-  late SSLClient mockSSLClient;
+  late MockSSLClient mockSSLClient;
 
   setUp(() {
-    mockHttpClient = MockHttpClient();
-    mockSSLClient = SSLClient(client: mockHttpClient);
+    mockSSLClient = MockSSLClient();
     dataSource = MovieRemoteDataSourceImpl(client: mockSSLClient);
   });
 

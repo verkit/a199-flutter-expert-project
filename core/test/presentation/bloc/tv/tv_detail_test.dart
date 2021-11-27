@@ -146,7 +146,7 @@ void main() {
       },
       expect: () => [
         TvDetailState(
-          status: TvDetailStatus.success,
+          status: TvDetailStatus.addToWatchlist,
           addedInWatchlist: true,
           recommendations: null,
           tv: null,
@@ -186,7 +186,7 @@ void main() {
       act: (bloc) => bloc.add(RemoveFromWatchlist(testTvDetail)),
       expect: () => [
         TvDetailState(
-          status: TvDetailStatus.success,
+          status: TvDetailStatus.removeFromWatchlist,
           addedInWatchlist: false,
           recommendations: null,
           tv: null,

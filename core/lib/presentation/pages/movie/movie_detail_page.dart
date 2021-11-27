@@ -30,29 +30,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<MovieDetailBloc, MovieDetailState>(
-        listenWhen: (previous, current) => previous != current,
-        listener: (context, state) {
-          if (state.status == MovieDetailStatus.addToWatchlist) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(MovieDetailBloc.watchlistAddSuccessMessage)));
-          }
-
-          if (state.status == MovieDetailStatus.removeFromWatchlist) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(MovieDetailBloc.watchlistRemoveSuccessMessage)));
-          }
-
-          if (state.status == MovieDetailStatus.failure) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text(state.message ?? 'Error'),
-                  );
-                });
-          }
-        },
+      body: BlocBuilder<MovieDetailBloc, MovieDetailState>(
+        buildWhen: (previous, current) => previous != current,
         builder: (_, state) {
           if (state.status == MovieDetailStatus.loading) {
             return Center(
@@ -67,10 +46,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 movie!,
                 state.recommendations!,
                 state.addedInWatchlist,
+                state,
               ),
             );
+          } else if (state.status == MovieDetailStatus.failure) {
+            return Center(child: Text(state.message!));
           } else {
-            return Text(state.message ?? 'error');
+            return SizedBox();
           }
         },
       ),
@@ -82,8 +64,9 @@ class DetailContent extends StatelessWidget {
   final MovieDetail movie;
   final List<Movie> recommendations;
   final bool isAddedWatchlist;
+  final MovieDetailState state;
 
-  DetailContent(this.movie, this.recommendations, this.isAddedWatchlist);
+  DetailContent(this.movie, this.recommendations, this.isAddedWatchlist, this.state);
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +112,12 @@ class DetailContent extends StatelessWidget {
                               onPressed: () async {
                                 if (!isAddedWatchlist) {
                                   context.read<MovieDetailBloc>().add(AddToWatchlist(movie));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(MovieDetailBloc.watchlistAddSuccessMessage)));
                                 } else {
                                   context.read<MovieDetailBloc>().add(RemoveFromWatchlist(movie));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(MovieDetailBloc.watchlistRemoveSuccessMessage)));
                                 }
                               },
                               child: Row(

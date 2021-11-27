@@ -1,28 +1,27 @@
 import 'package:core/domain/entities/tv.dart';
+import 'package:core/presentation/bloc/tv/top_rated_tvs/top_rated_tvs_cubit.dart';
 import 'package:core/presentation/pages/tv/top_rated_tvs_page.dart';
-import 'package:core/presentation/provider/tv/top_rated_tvs_notifier.dart';
 import 'package:core/presentation/widgets/tv_card_list.dart';
-import 'package:core/utils/state_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 
 import '../../../dummy_data/tv/dummy_objects.dart';
 import 'top_rated_tvs_page_test.mocks.dart';
 
-@GenerateMocks([TopRatedTvsNotifier])
+@GenerateMocks([TopRatedTvsCubit])
 void main() {
-  late MockTopRatedTvsNotifier mockNotifier;
+  late MockTopRatedTvsCubit mockCubit;
 
   setUp(() {
-    mockNotifier = MockTopRatedTvsNotifier();
+    mockCubit = MockTopRatedTvsCubit();
   });
 
   Widget _makeTestableWidget(Widget body) {
-    return ChangeNotifierProvider<TopRatedTvsNotifier>.value(
-      value: mockNotifier,
+    return BlocProvider<TopRatedTvsCubit>.value(
+      value: mockCubit,
       child: MaterialApp(
         home: body,
       ),
@@ -30,7 +29,8 @@ void main() {
   }
 
   testWidgets('Page should display progress bar when loading', (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loading);
+    when(mockCubit.state).thenReturn(TopRatedTvsLoading());
+    when(mockCubit.stream).thenAnswer((_) => const Stream.empty());
 
     final progressFinder = find.byType(CircularProgressIndicator);
     final centerFinder = find.byType(Center);
@@ -42,8 +42,8 @@ void main() {
   });
 
   testWidgets('Page should display when data is loaded', (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loaded);
-    when(mockNotifier.tvs).thenReturn(<Tv>[testTv]);
+    when(mockCubit.state).thenReturn(TopRatedTvsHasData(<Tv>[testTv]));
+    when(mockCubit.stream).thenAnswer((_) => Stream.value(TopRatedTvsHasData(<Tv>[testTv])));
 
     final listViewFinder = find.byType(ListView);
 
@@ -54,8 +54,8 @@ void main() {
   });
 
   testWidgets('Page should display text with message when Error', (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Error);
-    when(mockNotifier.message).thenReturn('Error message');
+    when(mockCubit.state).thenReturn(TopRatedTvsError('Error Message'));
+    when(mockCubit.stream).thenAnswer((_) => Stream.value(TopRatedTvsError('Error Message')));
 
     final textFinder = find.byKey(Key('error_message'));
 

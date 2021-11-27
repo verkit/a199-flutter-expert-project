@@ -29,37 +29,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<TvDetailBloc, TvDetailState>(
-        listenWhen: (previous, current) => previous != current,
-        listener: (context, state) {
-          if (state.status == TvDetailStatus.addToWatchlist) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(TvDetailBloc.watchlistAddSuccessMessage)));
-          }
-
-          if (state.status == TvDetailStatus.removeFromWatchlist) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(TvDetailBloc.watchlistRemoveSuccessMessage)));
-          }
-
-          if (state.status == TvDetailStatus.failure) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text(state.message ?? 'Error'),
-                  );
-                });
-          }
-        },
+      body: BlocBuilder<TvDetailBloc, TvDetailState>(
         builder: (_, state) {
           if (state.status == TvDetailStatus.loading || state.status == TvDetailStatus.initial) {
             return Center(
@@ -74,6 +46,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
                 tv!,
                 state.recommendations!,
                 state.addedInWatchlist,
+                state,
               ),
             );
           } else {
@@ -89,8 +62,8 @@ class DetailContent extends StatelessWidget {
   final TvDetail tv;
   final List<Tv> recommendations;
   final bool isAddedWatchlist;
-
-  DetailContent(this.tv, this.recommendations, this.isAddedWatchlist);
+  final TvDetailState state;
+  DetailContent(this.tv, this.recommendations, this.isAddedWatchlist, this.state);
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +109,12 @@ class DetailContent extends StatelessWidget {
                               onPressed: () async {
                                 if (!isAddedWatchlist) {
                                   context.read<TvDetailBloc>().add(AddToWatchlist(tv));
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(content: Text(TvDetailBloc.watchlistAddSuccessMessage)));
                                 } else {
                                   context.read<TvDetailBloc>().add(RemoveFromWatchlist(tv));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(TvDetailBloc.watchlistRemoveSuccessMessage)));
                                 }
                               },
                               child: Row(

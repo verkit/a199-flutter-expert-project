@@ -42,7 +42,6 @@ import 'package:core/presentation/bloc/tv/tv_season_detail/tv_season_detail_cubi
 import 'package:core/presentation/bloc/tv/watchlist_tv/watchlist_tv_cubit.dart';
 import 'package:core/utils/ssl_pinning.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
 
 final locator = GetIt.instance;
 
@@ -137,6 +136,5 @@ void init() {
   locator.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper());
 
   // external
-  locator.registerLazySingleton(() => http.Client());
-  locator.registerLazySingleton(() => SSLClient(client: locator()));
+  locator.registerLazySingleton(() => SSLClient());
 }
