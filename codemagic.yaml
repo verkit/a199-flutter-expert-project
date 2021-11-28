@@ -1,0 +1,46 @@
+# Automatically generated on 2021-11-28 UTC from https://codemagic.io/app/619d18adf30f105e3e73ef70/settings
+# Note that this configuration is not an exact match to UI settings. Review and adjust as necessary.
+
+workflows:
+  default-workflow:
+    name: Default Workflow
+    max_build_duration: 60
+    environment:
+      vars:
+        CODECOV_TOKEN: Encrypted(Z0FBQUFBQmhveFpULVZKWnEyNy05aVAzZUh0MUlKeXozTE1SYVpsZzNHeDlUNHBwdm1YVUVtcUlZMjJPV0dVQkNkbFdnd1VOMUNVOE9pRVBNNmFBMXI1VkVfLWRqbXpjVDhtWDRYVlRSLTVIX1R4SG95OThsWEdDeTRvbl9yWm51czhLV0tlblJaTk4=)
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - "$HOME/Library/Caches/CocoaPods\t"
+        - "$HOME/.gradle/caches\t"
+        - "$FLUTTER_ROOT/.pub-cache\t"
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - flutter packages pub get
+      - flutter test modules/core modules/movie modules/tv_series
+      - name: Coverage Test
+        script: |
+          #!/bin/bash
+          flutter test --coverage
+          bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN    
+
+    artifacts:
+      - '*.snap'
+      - build/windows/**/*.msix
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - verdybangkit@gmail.com
