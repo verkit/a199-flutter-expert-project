@@ -1,7 +1,6 @@
 part of 'tv_search_bloc.dart';
 
-@immutable
-abstract class TvSearchEvent extends Equatable {
+class TvSearchEvent extends Equatable {
   const TvSearchEvent();
 
   @override

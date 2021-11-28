@@ -169,6 +169,7 @@ void main() {
       MovieDetailState(
         movie: testMovieDetail,
         recommendations: <Movie>[],
+        addedInWatchlist: true,
         status: MovieDetailStatus.removeFromWatchlist,
         message: MovieDetailBloc.watchlistRemoveSuccessMessage,
       ),
@@ -178,6 +179,7 @@ void main() {
         MovieDetailState(
           movie: testMovieDetail,
           recommendations: <Movie>[],
+          addedInWatchlist: true,
           status: MovieDetailStatus.removeFromWatchlist,
           message: MovieDetailBloc.watchlistRemoveSuccessMessage,
         ),
@@ -188,12 +190,23 @@ void main() {
 
     await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
 
-    expect(find.byIcon(Icons.add), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
 
     await tester.tap(watchlistButton);
     await tester.pump();
 
     expect(find.byType(SnackBar), findsOneWidget);
-    // expect(find.text(MovieDetailBloc.watchlistRemoveSuccessMessage), findsOneWidget);
+    expect(find.text(MovieDetailBloc.watchlistRemoveSuccessMessage), findsOneWidget);
+  });
+
+  testWidgets('Page should display Sizedbox when state in initial', (WidgetTester tester) async {
+    when(() => bloc.state).thenReturn(MovieDetailState.initialState());
+    when(() => bloc.stream).thenAnswer((_) => Stream.empty());
+
+    final textFinder = find.byType(SizedBox);
+
+    await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
+
+    expect(textFinder, findsOneWidget);
   });
 }

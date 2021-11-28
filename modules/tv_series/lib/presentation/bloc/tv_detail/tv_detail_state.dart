@@ -1,24 +1,28 @@
 part of 'tv_detail_bloc.dart';
 
-enum TvDetailStatus { initial, loading, success, failure , addToWatchlist, removeFromWatchlist}
+enum TvDetailStatus { initial, loading, success, failure, addToWatchlist, removeFromWatchlist }
 
 class TvDetailState extends Equatable {
   const TvDetailState({
     this.addedInWatchlist = false,
-    this.status = TvDetailStatus.initial,
+    this.status,
     this.message,
     this.tv,
     this.recommendations,
   });
 
   final bool addedInWatchlist;
-  final TvDetailStatus status;
+  final TvDetailStatus? status;
   final String? message;
   final TvDetail? tv;
   final List<Tv>? recommendations;
 
   factory TvDetailState.initialState() {
-    return TvDetailState(tv: null, recommendations: null);
+    return TvDetailState(
+      tv: null,
+      recommendations: null,
+      status: TvDetailStatus.initial,
+    );
   }
 
   TvDetailState copyWith({

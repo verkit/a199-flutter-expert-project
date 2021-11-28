@@ -105,7 +105,7 @@ void main() {
     );
 
     blocTest<TvDetailBloc, TvDetailState>(
-      'should return error when data is unsuccessful',
+      'should return error when data tv detail is unsuccessful',
       build: () {
         when(mockGetTvDetail.execute(tId)).thenAnswer((_) async => Left(ServerFailure('Server Failure')));
         when(mockGetWatchlistStatus.execute(tId)).thenAnswer((_) async => false);
@@ -125,6 +125,40 @@ void main() {
           status: TvDetailStatus.failure,
           addedInWatchlist: false,
           tv: null,
+          recommendations: null,
+          message: "Server Failure",
+        ),
+      ],
+    );
+
+    blocTest<TvDetailBloc, TvDetailState>(
+      'should return error when data recommendation tv is unsuccessful',
+      build: () {
+        when(mockGetTvDetail.execute(tId)).thenAnswer((_) async => Right(testTvDetail));
+        when(mockGetWatchlistStatus.execute(tId)).thenAnswer((_) async => false);
+        when(mockGetTvRecommendations.execute(tId)).thenAnswer((_) async => Left(ServerFailure('Server Failure')));
+        return tvDetailBloc;
+      },
+      act: (bloc) => bloc.add(LoadDetailTv(tId)),
+      expect: () => [
+        const TvDetailState(
+          status: TvDetailStatus.loading,
+          addedInWatchlist: false,
+          tv: null,
+          recommendations: null,
+          message: null,
+        ),
+        TvDetailState(
+          status: TvDetailStatus.loading,
+          addedInWatchlist: false,
+          tv: testTvDetail,
+          recommendations: null,
+          message: null,
+        ),
+        TvDetailState(
+          status: TvDetailStatus.failure,
+          addedInWatchlist: false,
+          tv: testTvDetail,
           recommendations: null,
           message: "Server Failure",
         ),
@@ -219,5 +253,23 @@ void main() {
         ),
       ],
     );
+  });
+
+  test('supports value comparison', () {
+    expect(TvDetailEvent(), TvDetailEvent());
+    expect(LoadDetailTv(1), LoadDetailTv(1));
+    expect(AddToWatchlist(testTvDetail), AddToWatchlist(testTvDetail));
+    expect(RemoveFromWatchlist(testTvDetail), RemoveFromWatchlist(testTvDetail));
+  });
+
+  test('should return same state', () {
+    final state = TvDetailState(
+      status: TvDetailStatus.failure,
+      addedInWatchlist: true,
+      recommendations: null,
+      tv: null,
+      message: 'Failed',
+    );
+    expect(state, state.copyWith());
   });
 }

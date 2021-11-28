@@ -5,20 +5,24 @@ enum MovieDetailStatus { initial, loading, success, failure, addToWatchlist, rem
 class MovieDetailState extends Equatable {
   const MovieDetailState({
     this.addedInWatchlist = false,
-    this.status = MovieDetailStatus.initial,
+    this.status,
     this.message,
     this.movie,
     this.recommendations,
   });
 
   final bool addedInWatchlist;
-  final MovieDetailStatus status;
+  final MovieDetailStatus? status;
   final String? message;
   final MovieDetail? movie;
   final List<Movie>? recommendations;
 
   factory MovieDetailState.initialState() {
-    return MovieDetailState(movie: null, recommendations: null);
+    return MovieDetailState(
+      movie: null,
+      recommendations: null,
+      status: MovieDetailStatus.initial,
+    );
   }
 
   MovieDetailState copyWith({

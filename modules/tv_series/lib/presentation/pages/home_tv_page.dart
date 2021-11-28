@@ -152,7 +152,6 @@ class TvList extends StatelessWidget {
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(),
                   ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
             ),

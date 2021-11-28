@@ -63,4 +63,15 @@ void main() {
 
     expect(textFinder, findsOneWidget);
   });
+
+  testWidgets('Page should display Sizedbox when state in initial', (WidgetTester tester) async {
+    when(mockCubit.state).thenReturn(PopularTvsInitial());
+    when(mockCubit.stream).thenAnswer((_) => Stream.empty());
+
+    final textFinder = find.byType(SizedBox);
+
+    await tester.pumpWidget(_makeTestableWidget(PopularTvsPage()));
+
+    expect(textFinder, findsOneWidget);
+  });
 }

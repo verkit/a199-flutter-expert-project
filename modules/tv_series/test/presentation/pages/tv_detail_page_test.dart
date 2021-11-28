@@ -1,4 +1,7 @@
+import 'package:core/domain/entities/genre.dart';
+import 'package:core/domain/entities/tv/season.dart';
 import 'package:core/domain/entities/tv/tv.dart';
+import 'package:core/domain/entities/tv/tv_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -134,6 +137,7 @@ void main() {
     when(() => bloc.state).thenReturn(TvDetailState(
       tv: testTvDetail,
       recommendations: <Tv>[],
+      addedInWatchlist: true,
       status: TvDetailStatus.removeFromWatchlist,
       message: TvDetailBloc.watchlistRemoveSuccessMessage,
     ));
@@ -141,6 +145,7 @@ void main() {
       (_) => Stream.value(TvDetailState(
         tv: testTvDetail,
         recommendations: <Tv>[],
+        addedInWatchlist: true,
         status: TvDetailStatus.removeFromWatchlist,
         message: TvDetailBloc.watchlistRemoveSuccessMessage,
       )),
@@ -150,12 +155,68 @@ void main() {
 
     await tester.pumpWidget(_makeTestableWidget(TvDetailPage(id: 1)));
 
-    expect(find.byIcon(Icons.add), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
 
     await tester.tap(watchlistButton);
     await tester.pump();
 
     expect(find.byType(SnackBar), findsOneWidget);
-    // expect(find.text(TvDetailBloc.watchlistRemoveSuccessMessage), findsOneWidget);
+    expect(find.text(TvDetailBloc.watchlistRemoveSuccessMessage), findsOneWidget);
+  });
+
+  testWidgets('Page should display icon error when season image poster is null', (tester) async {
+    final _testTvDetail = TvDetail(
+      backdropPath: 'backdropPath',
+      episodeRunTime: [1, 2, 3],
+      firstAirDate: '2012-01-01',
+      genres: [Genre(id: 1, name: 'Action')],
+      homepage: 'homepage',
+      id: 1,
+      inProduction: false,
+      languages: ['en'],
+      lastAirDate: '2021-01-01',
+      name: 'name',
+      numberOfEpisodes: 1,
+      numberOfSeasons: 1,
+      originCountry: ['US'],
+      originalLanguage: 'en',
+      originalName: 'originalName',
+      overview: 'overview',
+      popularity: 1.0,
+      posterPath: 'null',
+      seasons: [
+        Season(
+          airDate: '2021-01-01',
+          episodeCount: 1,
+          id: 1,
+          name: 'name',
+          overview: 'overview',
+          posterPath: null,
+          seasonNumber: 1,
+        )
+      ],
+      status: 'status',
+      tagline: 'tagline',
+      type: 'type',
+      voteAverage: 1,
+      voteCount: 1,
+    );
+
+    when(() => bloc.state).thenReturn(TvDetailState(
+      tv: _testTvDetail,
+      status: TvDetailStatus.success,
+      recommendations: <Tv>[],
+    ));
+    when(() => bloc.stream).thenAnswer(
+      (_) => Stream.value(TvDetailState(
+        tv: _testTvDetail,
+        status: TvDetailStatus.success,
+        recommendations: <Tv>[],
+      )),
+    );
+
+    await tester.pumpWidget(_makeTestableWidget(TvDetailPage(id: 1)));
+
+    expect(find.byIcon(Icons.error), findsOneWidget);
   });
 }

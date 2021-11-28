@@ -155,6 +155,40 @@ void main() {
     );
 
     blocTest<MovieDetailBloc, MovieDetailState>(
+      'should return error when data recommendation movie is unsuccessful',
+      build: () {
+        when(mockGetMovieDetail.execute(tId)).thenAnswer((_) async => Right(testMovieDetail));
+        when(mockGetWatchlistStatus.execute(tId)).thenAnswer((_) async => false);
+        when(mockGetMovieRecommendations.execute(tId)).thenAnswer((_) async => Left(ServerFailure('Server Failure')));
+        return movieDetailBloc;
+      },
+      act: (bloc) => bloc.add(LoadDetailMovie(tId)),
+      expect: () => [
+        const MovieDetailState(
+          status: MovieDetailStatus.loading,
+          addedInWatchlist: false,
+          movie: null,
+          recommendations: null,
+          message: null,
+        ),
+        MovieDetailState(
+          status: MovieDetailStatus.loading,
+          addedInWatchlist: false,
+          movie: testMovieDetail,
+          recommendations: null,
+          message: null,
+        ),
+        MovieDetailState(
+          status: MovieDetailStatus.failure,
+          addedInWatchlist: false,
+          movie: testMovieDetail,
+          recommendations: null,
+          message: "Server Failure",
+        ),
+      ],
+    );
+
+    blocTest<MovieDetailBloc, MovieDetailState>(
       'should show error when add watchlist failed',
       build: () {
         when(mockSaveMovieWatchlist.execute(testMovieDetail)).thenAnswer((_) async => Left(DatabaseFailure('Failed')));
@@ -220,5 +254,23 @@ void main() {
         ),
       ],
     );
+  });
+
+  test('supports value comparison', () {
+    expect(MovieDetailEvent(), MovieDetailEvent());
+    expect(LoadDetailMovie(1), LoadDetailMovie(1));
+    expect(AddToWatchlist(testMovieDetail), AddToWatchlist(testMovieDetail));
+    expect(RemoveFromWatchlist(testMovieDetail), RemoveFromWatchlist(testMovieDetail));
+  });
+
+  test('should return same state', () {
+    final state = MovieDetailState(
+      status: MovieDetailStatus.failure,
+      addedInWatchlist: true,
+      recommendations: null,
+      movie: null,
+      message: 'Failed',
+    );
+    expect(state, state.copyWith());
   });
 }

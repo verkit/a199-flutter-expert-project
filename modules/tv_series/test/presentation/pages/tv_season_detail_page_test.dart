@@ -12,6 +12,8 @@ import 'package:tv_series/presentation/widgets/episode_card_list.dart';
 
 import 'tv_season_detail_page_test.mocks.dart';
 
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+
 @GenerateMocks([TvSeasonDetailCubit])
 void main() {
   late MockTvSeasonDetailCubit mockCubit;
@@ -91,5 +93,41 @@ void main() {
     )));
 
     expect(find.text("Error Message"), findsOneWidget);
+  });
+
+  testWidgets('Page should display icon error when season image poster is null', (tester) async {
+    final _tSeasonDetail = SeasonDetailModel(
+      airDate: '2021-10-12',
+      episodes: [tEpisodeModel],
+      id: tvId,
+      name: 'Season 1',
+      overview: 'overview',
+      posterPath: null,
+      seasonNumber: seasonNumber,
+    );
+
+    when(mockCubit.state).thenReturn(TvSeasonDetailHasData(_tSeasonDetail.toEntity()));
+    when(mockCubit.stream).thenAnswer((_) => Stream.value(TvSeasonDetailHasData(_tSeasonDetail.toEntity())));
+
+    await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
+      id: tvId,
+      seasonNumber: seasonNumber,
+    )));
+
+    expect(find.byIcon(Icons.error), findsOneWidget);
+  });
+
+  testWidgets('Page should display Sizedbox when state in initial', (WidgetTester tester) async {
+    when(mockCubit.state).thenReturn(TvSeasonDetailInitial());
+    when(mockCubit.stream).thenAnswer((_) => Stream.empty());
+
+    final textFinder = find.byType(SizedBox);
+
+    await tester.pumpWidget(_makeTestableWidget(TvSeasonDetailPage(
+      id: tvId,
+      seasonNumber: seasonNumber,
+    )));
+
+    expect(textFinder, findsOneWidget);
   });
 }

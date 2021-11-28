@@ -43,6 +43,11 @@ void main() {
     expect(searchBloc.state, TvSearchInitial());
   });
 
+  test('supports value comparison', () {
+    expect(OnQueryChanged('query'), OnQueryChanged('query'));
+    expect(TvSearchEvent(), TvSearchEvent());
+  });
+
   group('Search Tvs', () {
     blocTest<TvSearchBloc, TvSearchState>(
       'Should emit [Loading, HasData] when data is gotten successfully',

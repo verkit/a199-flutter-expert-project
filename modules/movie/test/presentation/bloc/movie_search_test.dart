@@ -43,6 +43,11 @@ void main() {
     expect(searchBloc.state, MovieSearchInitial());
   });
 
+  test('supports value comparison', () {
+    expect(OnQueryChanged('query'), OnQueryChanged('query'));
+    expect(MovieSearchEvent(), MovieSearchEvent());
+  });
+
   group('Search Movies', () {
     blocTest<MovieSearchBloc, MovieSearchState>(
       'Should emit [Loading, HasData] when data is gotten successfully',

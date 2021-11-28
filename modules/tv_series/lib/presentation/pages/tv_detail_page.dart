@@ -76,7 +76,6 @@ class DetailContent extends StatelessWidget {
           placeholder: (context, url) => Center(
             child: CircularProgressIndicator(),
           ),
-          errorWidget: (context, url, error) => Icon(Icons.error),
         ),
         Container(
           margin: const EdgeInsets.only(top: 48 + 8),
@@ -231,12 +230,6 @@ class DetailContent extends StatelessWidget {
                         placeholder: (context, url) => Center(
                           child: CircularProgressIndicator(),
                         ),
-                        errorWidget: (context, url, error) => Padding(
-                          padding: const EdgeInsets.all(
-                            32.0,
-                          ),
-                          child: Icon(Icons.error),
-                        ),
                       )
                     else
                       Padding(
@@ -311,7 +304,6 @@ class DetailContent extends StatelessWidget {
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(),
                   ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
             ),
