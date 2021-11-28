@@ -10,6 +10,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_series/presentation/bloc/tv_detail/tv_detail_bloc.dart';
 import 'package:tv_series/presentation/pages/tv_season_detail_page.dart';
+import 'package:tv_series/presentation/widgets/tv_card_list.dart';
 
 class TvDetailPage extends StatefulWidget {
   static const ROUTE_NAME = '/tv-detail';
@@ -282,32 +283,11 @@ class DetailContent extends StatelessWidget {
     return Container(
       height: 150,
       child: ListView.builder(
+        key: Key('_buildTvRecommendations'),
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           final tv = recommendations[index];
-          return Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.pushReplacementNamed(
-                  context,
-                  TvDetailPage.ROUTE_NAME,
-                  arguments: tv.id,
-                );
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: 'https://image.tmdb.org/t/p/w500${tv.posterPath}',
-                  placeholder: (context, url) => Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
-          );
+          return TvCard(tv);
         },
         itemCount: recommendations.length,
       ),

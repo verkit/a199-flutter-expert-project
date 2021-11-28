@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
 import 'package:movie/presentation/pages/movie_detail_page.dart';
+import 'package:movie/presentation/widgets/movie_card_list.dart';
 
 import '../../dummy_data/dummy_objects.dart';
 
@@ -208,5 +209,27 @@ void main() {
     await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
 
     expect(textFinder, findsOneWidget);
+  });
+
+  testWidgets('Page should display ListView when recommendation data is loaded', (WidgetTester tester) async {
+    when(() => bloc.state).thenReturn(MovieDetailState(
+      status: MovieDetailStatus.success,
+      movie: testMovieDetail,
+      recommendations: <Movie>[testMovie],
+    ));
+    when(() => bloc.stream).thenAnswer(
+      (_) => Stream.value(MovieDetailState(
+        status: MovieDetailStatus.success,
+        movie: testMovieDetail,
+        recommendations: <Movie>[testMovie],
+      )),
+    );
+
+    final listViewFinder = find.byType(ListView);
+
+    await tester.pumpWidget(_makeTestableWidget(MovieDetailPage(id: 1)));
+
+    expect(listViewFinder, findsOneWidget);
+    expect(find.byType(MovieCard), findsOneWidget);
   });
 }

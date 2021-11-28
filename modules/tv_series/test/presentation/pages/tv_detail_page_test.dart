@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tv_series/presentation/bloc/tv_detail/tv_detail_bloc.dart';
 import 'package:tv_series/presentation/pages/tv_detail_page.dart';
+import 'package:tv_series/presentation/widgets/tv_card_list.dart';
 
 import '../../dummy_data/tv/dummy_objects.dart';
 
@@ -218,5 +219,27 @@ void main() {
     await tester.pumpWidget(_makeTestableWidget(TvDetailPage(id: 1)));
 
     expect(find.byIcon(Icons.error), findsOneWidget);
+  });
+
+  testWidgets('Page should display ListView when recommendation data is loaded', (WidgetTester tester) async {
+    when(() => bloc.state).thenReturn(TvDetailState(
+      tv: testTvDetail,
+      status: TvDetailStatus.success,
+      recommendations: [testTv],
+    ));
+    when(() => bloc.stream).thenAnswer(
+      (_) => Stream.value(TvDetailState(
+        tv: testTvDetail,
+        status: TvDetailStatus.success,
+        recommendations: [testTv],
+      )),
+    );
+
+    final listViewFinder = find.byKey(Key('_buildTvRecommendations'));
+
+    await tester.pumpWidget(_makeTestableWidget(TvDetailPage(id: 1)));
+
+    expect(listViewFinder, findsOneWidget);
+    expect(find.byType(TvCard), findsOneWidget);
   });
 }
